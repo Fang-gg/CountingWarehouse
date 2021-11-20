@@ -1,7 +1,7 @@
 package com.fst.dws
 
 
-import com.fst.common.SparkTool
+import com.fst.common.{Config, SparkTool}
 import com.fst.grid.Grid
 import org.apache.spark.sql.{SaveMode, SparkSession}
 import org.apache.spark.sql.expressions.{UserDefinedFunction, Window}
@@ -16,6 +16,11 @@ object DwsStaypointMskD extends SparkTool {
   override def run(spark: SparkSession): Unit = {
     import spark.implicits._
     import org.apache.spark.sql.functions._
+
+    val MERGELOCATION_TABLE_NAME: String = Config.get("mergelocation.table.name")
+    val STAYPOINT_PATH: String = Config.get("staypoint.path")
+    val STAYPOINT_TABLE_NAME: String = Config.get("staypoint.table.name")
+
 
     val getLongi: UserDefinedFunction = udf((grid: String) => {
       // 通过网格编号获取网格中心点的经度
@@ -32,7 +37,7 @@ object DwsStaypointMskD extends SparkTool {
     // 用DSL写
     spark
       // 读取融合表
-      .table("dwd.dwd_res_regn_mergelocation_msk_d")
+      .table(MERGELOCATION_TABLE_NAME)
       // 取出指定分区的数据
       .where($"day_id" === day_id)
       // 取出开始时间和结束时间
@@ -62,10 +67,10 @@ object DwsStaypointMskD extends SparkTool {
       .format("csv")
       .option("sep", "\t")
       .mode(SaveMode.Overwrite)
-      .save("/daas/motl/dws/dws_staypoint_msk_d/day_id=" + day_id)
+      .save(s"${STAYPOINT_PATH}day_id=" + day_id)
 
     // 增加分区
-    spark.sql(s"alter table dws.dws_staypoint_msk_d add if not exists partition(day_id='$day_id') ")
+    spark.sql(s"alter table $STAYPOINT_TABLE_NAME add if not exists partition(day_id='$day_id') ")
   }
 }
 
