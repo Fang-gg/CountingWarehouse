@@ -43,7 +43,7 @@ object DwsStaypointMskD extends SparkTool {
       // 取出开始时间和结束时间
       .withColumn("start_date", split($"start_time", ",")(1))
       .withColumn("end_date", split($"start_time", ",")(0))
-      // 按照手机号分组，按照时间排序，去上一条数据的网格编号
+      // 按照手机号分组，按照时间排序，取上一条数据的网格编号
       .withColumn("s_grid", lag($"grid_id", 1, "") over Window.partitionBy($"mdn").orderBy($"start_date"))
       // 判断当前网格编号和上一条数据的网格编号是否一致，划分边界
       .withColumn("flag", when($"s_grid" === $"grid_id", 0).otherwise(1))
