@@ -9,13 +9,6 @@ import org.apache.spark.sql.SparkSession
 object DwdResRegnMergelocationMskD extends SparkTool {
   override def run(spark: SparkSession): Unit = {
 
-    val MERGELOCATION_TABLE_NAME: String = Config.get("mergelocation.table.name")
-    val DDR_TABLE_NAME: String = Config.get("ddr.table.name")
-    val DPI_TABLE_NAME: String = Config.get("dpi.table.name")
-    val WCDR_TABLE_NAME: String = Config.get("wcdr.table.name")
-    val OIDD_TABLE_NAME: String = Config.get("oidd.table.name")
-
-    
     // union all不会去重，因此用union all
     spark.sql(
       s"""
