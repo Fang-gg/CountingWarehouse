@@ -1,0 +1,27 @@
+---
+config:
+  day_id: $(new("org.joda.time.DateTime").minusDays(1).toString("yyyyMMdd"))
+
+nodes:
+
+
+  - name: DwdResRegnMergelocationMskD
+    type: command
+    config:
+      command: sh /root/tour/DwdResRegnMergelocationMskD.sh $day_id
+
+  - name: DwsStaypointMskD
+    type: command
+    config:
+      command: sh /root/tour/DwsStaypointMskD.sh $day_id
+
+    dependsOn:
+      - DwdResRegnMergelocationMskD
+
+  - name: AdsProvinceTouristMskD
+    type: command
+    config:
+      command: sh /root/tour/AdsProvinceTouristMskD.sh $day_id
+
+    dependsOn:
+      - DwsStaypointMskD
