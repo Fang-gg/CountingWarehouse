@@ -19,7 +19,7 @@
 package com.fst.grid;
 
 
-import com.shujia.grid.entity.Gps;
+import com.fst.grid.entity.Gps;
 
 public class GISUtil {
 	public static final int r = 6371000;
