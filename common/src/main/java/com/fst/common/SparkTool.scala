@@ -3,9 +3,9 @@ package com.fst.common
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.SparkSession
 
-abstract class SparkTool extends Logging {
+abstract class SparkTool extends Logging with Constant {
   var day_id: String = _
-
+  var month_id: String = _
   def main(args: Array[String]): Unit = {
 
     /**
@@ -13,14 +13,16 @@ abstract class SparkTool extends Logging {
      */
     if (args.length == 0) {
       // 使用Logging中打印日志的方法
-      logError("请传入时间参数")
-      return
+      logWarning("请传入时间参数")
+    }else{
+      day_id = args(0)  // 需要我们自己传进来
+      logInfo(s"时间参数:$day_id")
+      // 月分区
+      month_id=day_id.substring(0,6)
+      logInfo("创建Spark环境")
     }
 
-    day_id = args(0)  // 需要我们自己传进来
-    logInfo(s"时间参数:$day_id")
 
-    logInfo("创建Spark环境")
     /**
      * 构建spark环境
      */
